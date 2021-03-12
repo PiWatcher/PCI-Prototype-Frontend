@@ -1,6 +1,14 @@
 version: "3.7"
 
 services:
+  ssl:
+    container_name: self-cert-ssl
+    image: paulczar/omgwtfssl
+    environment:
+      SSL_SUBJECT: PiWatcher SSL Certification
+    volumes: 
+      - ssldata:/certs
+
   pci-frontend:
     container_name: pci-frontend
     image: piwatcher/pci-frontend:latest
@@ -11,4 +19,13 @@ services:
       args:
         - REACT_APP_BASE_URL=http://cscap1.iot.nau.edu
     ports:
-      - "4000:80"
+      - "4000:443"
+    volumes: 
+      - ssldata:/certs
+    depends_on:
+      - ssl
+
+volumes:
+  ssldata:
+    driver: local
+
